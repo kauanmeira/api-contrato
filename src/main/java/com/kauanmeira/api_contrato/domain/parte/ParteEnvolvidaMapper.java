@@ -1,8 +1,8 @@
 package com.kauanmeira.api_contrato.domain.parte;
 
 
-import com.kauanmeira.api_contrato.domain.dto.AtualizarParteEnvolvidaDTO;
-import com.kauanmeira.api_contrato.domain.dto.ParteEnvolvidaDTO;
+import com.kauanmeira.api_contrato.dto.AtualizarParteEnvolvidaDTO;
+import com.kauanmeira.api_contrato.dto.ParteEnvolvidaDTO;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

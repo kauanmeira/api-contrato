@@ -22,11 +22,8 @@ public class Contrato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", unique = true)
-    private Long id;
-
-    @Column(unique = true, nullable = false)
-    private String numeroContrato;
+    @Column(name = "NUMERO_CONTRATO", unique = true)
+    private Long numeroContrato;
 
     @Column(name = "DATA_CRIACAO")
     private LocalDate dataCriacao;

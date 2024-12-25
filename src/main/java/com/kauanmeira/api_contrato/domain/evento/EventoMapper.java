@@ -1,6 +1,6 @@
 package com.kauanmeira.api_contrato.domain.evento;
 
-import com.kauanmeira.api_contrato.domain.dto.EventoDTO;
+import com.kauanmeira.api_contrato.dto.EventoDTO;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

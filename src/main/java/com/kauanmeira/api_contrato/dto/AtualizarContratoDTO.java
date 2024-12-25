@@ -1,5 +1,4 @@
-package com.kauanmeira.api_contrato.domain.dto;
-
+package com.kauanmeira.api_contrato.dto;
 
 import com.kauanmeira.api_contrato.domain.contrato.StatusContrato;
 import com.kauanmeira.api_contrato.domain.parte.ParteEnvolvida;
@@ -12,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,20 +19,13 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContratoDTO implements Serializable {
-    @NotBlank(message = "Informe o número do contrato.")
-    private String numeroContrato;
+public class AtualizarContratoDTO {
 
-    @NotNull(message = "Informe a data de criação.")
     private LocalDate dataCriacao;
 
-    @NotBlank(message = "Informe a descrição do contrato")
     private String descricaoContrato;
 
-    @NotNull(message = "Informe o status do contrato")
     private StatusContrato statusContrato;
 
-    @Valid
-    @NotEmpty(message = "Informe as partes envolvidas")
     private List<ParteEnvolvida> partesEnvolvidas = new ArrayList<>();
 }

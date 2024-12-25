@@ -2,5 +2,7 @@ package com.kauanmeira.api_contrato.domain.contrato;
 
 public enum StatusContrato {
     ATIVO,
-    ARQUIVADO
+    ENCERRADO,
+    SUSPENSO,
+    ARQUIVADO,
 }

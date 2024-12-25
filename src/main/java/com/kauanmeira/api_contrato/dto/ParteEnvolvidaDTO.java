@@ -1,4 +1,4 @@
-package com.kauanmeira.api_contrato.domain.dto;
+package com.kauanmeira.api_contrato.dto;
 
 import com.kauanmeira.api_contrato.domain.parte.TipoParte;
 import jakarta.validation.constraints.NotBlank;

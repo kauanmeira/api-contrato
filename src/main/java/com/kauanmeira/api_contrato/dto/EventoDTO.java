@@ -1,4 +1,4 @@
-package com.kauanmeira.api_contrato.domain.dto;
+package com.kauanmeira.api_contrato.dto;
 
 import com.kauanmeira.api_contrato.domain.evento.TipoEvento;
 import jakarta.validation.constraints.NotBlank;
