@@ -33,13 +33,14 @@ public class Contrato {
 
     @ManyToMany
     @JoinTable(name = "CONTRATO_PARTE",
-            joinColumns = @JoinColumn(name = "CONTRATO_ID"),
+            joinColumns = @JoinColumn(name = "NUMERO_CONTRATO"),
             inverseJoinColumns = @JoinColumn(name = "PARTE_ID"))
     private List<ParteEnvolvida> partesEnvolvidas = new ArrayList<>();
 
     @Column(name = "STATUS_CONTRATO")
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private StatusContrato statusContrato;
 
-
+    @Column(name = "ARQUIVADO")
+    private boolean arquivado;
 }

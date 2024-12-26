@@ -1,5 +1,6 @@
-package com.kauanmeira.api_contrato.dto;
+package com.kauanmeira.api_contrato.dto.parteEnvolvida;
 
+import com.kauanmeira.api_contrato.annotations.DataNascimentoValida;
 import com.kauanmeira.api_contrato.domain.parte.TipoParte;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,12 +17,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ParteEnvolvidaDTO {
+
     @NotBlank(message = "Informe a inscrição federal (CPF/CNPJ).")
     private String inscricaoFederal;
 
     @NotBlank(message = "Informe o nome completo.")
     private String nomeCompleto;
 
+    @DataNascimentoValida
     @NotNull(message = "Informe a data de nascimento.")
     private LocalDate dataNascimento;
 

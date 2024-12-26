@@ -1,10 +1,8 @@
 package com.kauanmeira.api_contrato.domain.evento;
 
-import com.kauanmeira.api_contrato.dto.EventoDTO;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import com.kauanmeira.api_contrato.dto.evento.AtualizarEventoDTO;
+import com.kauanmeira.api_contrato.dto.evento.EventoDTO;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -13,9 +11,10 @@ public interface EventoMapper {
 
     Evento toObject(EventoDTO eventoDTO);
 
+    @Mapping(source = "contrato.numeroContrato",target = "numeroContrato")
     EventoDTO toDTO(Evento evento);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Evento updateFromDTO(EventoDTO eventoDTO, @MappingTarget Evento evento);
+    Evento updateFromDTO(AtualizarEventoDTO atualizarEventoDTO, @MappingTarget Evento evento);
 }
 

@@ -1,11 +1,8 @@
 package com.kauanmeira.api_contrato.domain.contrato;
 
-import com.kauanmeira.api_contrato.dto.AtualizarContratoDTO;
-import com.kauanmeira.api_contrato.dto.ContratoDTO;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import com.kauanmeira.api_contrato.dto.contrato.AtualizarContratoDTO;
+import com.kauanmeira.api_contrato.dto.contrato.ContratoDTO;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -16,6 +13,7 @@ public interface ContratoMapper {
 
     ContratoDTO toDTO(Contrato contrato);
 
+    @Mapping(target = "partesEnvolvidas", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Contrato updateFromDTO(AtualizarContratoDTO atualizarContratoDTO, @MappingTarget Contrato contrato);
 }

@@ -1,5 +1,6 @@
-package com.kauanmeira.api_contrato.dto;
+package com.kauanmeira.api_contrato.dto.parteEnvolvida;
 
+import com.kauanmeira.api_contrato.annotations.DataNascimentoValida;
 import com.kauanmeira.api_contrato.domain.parte.TipoParte;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class AtualizarParteEnvolvidaDTO {
 
     private String nomeCompleto;
 
+    @DataNascimentoValida
     private LocalDate dataNascimento;
 
     private TipoParte tipoParte;

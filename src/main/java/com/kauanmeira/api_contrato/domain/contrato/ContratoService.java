@@ -1,8 +1,8 @@
 package com.kauanmeira.api_contrato.domain.contrato;
 
 import com.kauanmeira.api_contrato.domain.parte.ParteEnvolvida;
-import com.kauanmeira.api_contrato.dto.AtualizarContratoDTO;
-import com.kauanmeira.api_contrato.dto.ContratoDTO;
+import com.kauanmeira.api_contrato.dto.contrato.AtualizarContratoDTO;
+import com.kauanmeira.api_contrato.dto.contrato.ContratoDTO;
 import com.kauanmeira.api_contrato.exceptions.AttusException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,10 +19,26 @@ public class ContratoService {
 
     private final ContratoMapper contratoMapper = ContratoMapper.INSTANCE;
 
-    public ContratoDTO cadastrar(ContratoDTO contratoDTO, List<ParteEnvolvida> parteEnvolvidas) {
+    public ContratoDTO cadastrar(ContratoDTO contratoDTO, List<ParteEnvolvida> partesEnvolvidas) {
+        validarPartesEnvolvidas(partesEnvolvidas);
         Contrato contrato = contratoMapper.toObject(contratoDTO);
-        contrato.setPartesEnvolvidas(parteEnvolvidas);
+        contrato.setPartesEnvolvidas(partesEnvolvidas);
         return contratoMapper.toDTO(gravar(contrato));
+    }
+    private void validarPartesEnvolvidas(List<ParteEnvolvida> parteEnvolvidas) {
+        List<String> inscricoesDuplicadas = parteEnvolvidas.stream()
+                .collect(Collectors.groupingBy(ParteEnvolvida::getInscricaoFederal, Collectors.counting()))
+                .entrySet().stream()
+                .filter(entry -> entry.getValue() > 1)
+                .map(entry -> entry.getKey())
+                .collect(Collectors.toList());
+
+        if (!inscricoesDuplicadas.isEmpty()) {
+            throw new AttusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Existem partes envolvidas com inscrições federais duplicadas: " + String.join(", ", inscricoesDuplicadas)
+            );
+        }
     }
 
     public ContratoDTO buscarPorNumero(Long numero) {
@@ -34,7 +50,7 @@ public class ContratoService {
     public List<ContratoDTO> buscarPorData(LocalDate dataCriacao) {
         List<Contrato> contratos = contratoRepository.findContratoByDataCriacao(dataCriacao);
         if (contratos.isEmpty()) {
-            throw new AttusException(HttpStatus.NOT_FOUND, "Contrato não encontrada para a inscrição federal informada.");
+            throw new AttusException(HttpStatus.NOT_FOUND, "Contrato não encontrada para a data informada.");
         }
         return contratos.stream().map(contratoMapper::toDTO).collect(Collectors.toList());
     }
@@ -59,7 +75,12 @@ public class ContratoService {
 
     public void arquivar(Long numeroContrato) {
         Contrato contratoExistente = contratoRepository.findContratoByNumeroContrato(numeroContrato).orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, "Contrato não encontrado para o número inserido."));
-        contratoExistente.setStatusContrato(StatusContrato.ARQUIVADO);
+        contratoExistente.setArquivado(true);
+        gravar(contratoExistente);
+    }
+    public void desarquivar(Long numeroContrato) {
+        Contrato contratoExistente = contratoRepository.findContratoByNumeroContrato(numeroContrato).orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, "Contrato não encontrado para o número inserido."));
+        contratoExistente.setArquivado(false);
         gravar(contratoExistente);
     }
 

@@ -4,5 +4,4 @@ public enum StatusContrato {
     ATIVO,
     ENCERRADO,
     SUSPENSO,
-    ARQUIVADO,
 }

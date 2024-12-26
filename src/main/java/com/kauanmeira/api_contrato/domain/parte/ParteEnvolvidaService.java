@@ -1,8 +1,8 @@
 package com.kauanmeira.api_contrato.domain.parte;
 
 import com.kauanmeira.api_contrato.exceptions.AttusException;
-import com.kauanmeira.api_contrato.dto.AtualizarParteEnvolvidaDTO;
-import com.kauanmeira.api_contrato.dto.ParteEnvolvidaDTO;
+import com.kauanmeira.api_contrato.dto.parteEnvolvida.AtualizarParteEnvolvidaDTO;
+import com.kauanmeira.api_contrato.dto.parteEnvolvida.ParteEnvolvidaDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class ParteEnvolvidaService {
         return this.parteEnvolvidaRepository.save(parteEnvolvida)                ;
     }
 
-    public void atualizar(AtualizarParteEnvolvidaDTO atualizarParteEnvolvidaDTO, Long id) {
+    public void atualizarParteEnvolvida(AtualizarParteEnvolvidaDTO atualizarParteEnvolvidaDTO, Long id) {
         ParteEnvolvida parteEnvolvidaExistente = parteEnvolvidaRepository.findById(id).orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, "ParteEnvolvida não encontrado para o Id inserido."));
         ParteEnvolvida parteEnvolvida = parteEnvolvidaMapper.updateFromDTO(atualizarParteEnvolvidaDTO, parteEnvolvidaExistente);
         gravar(parteEnvolvida);

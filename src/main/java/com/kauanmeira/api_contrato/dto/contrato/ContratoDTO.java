@@ -1,8 +1,9 @@
-package com.kauanmeira.api_contrato.dto;
+package com.kauanmeira.api_contrato.dto.contrato;
 
 
+import com.kauanmeira.api_contrato.annotations.isDataValida;
 import com.kauanmeira.api_contrato.domain.contrato.StatusContrato;
-import com.kauanmeira.api_contrato.domain.parte.ParteEnvolvida;
+import com.kauanmeira.api_contrato.dto.parteEnvolvida.ParteEnvolvidaDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -22,7 +23,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContratoDTO implements Serializable {
-
+    private Long numeroContrato;
+    @isDataValida
     @NotNull(message = "Informe a data de criação.")
     private LocalDate dataCriacao;
 
@@ -35,4 +37,7 @@ public class ContratoDTO implements Serializable {
     @Valid
     @NotEmpty(message = "Informe as partes envolvidas")
     private List<ParteEnvolvidaDTO> partesEnvolvidas = new ArrayList<>();
+
+    private boolean arquivado;
+
 }

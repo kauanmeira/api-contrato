@@ -1,5 +1,6 @@
 package com.kauanmeira.api_contrato.domain.evento;
 
+import com.kauanmeira.api_contrato.domain.contrato.Contrato;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,4 +31,8 @@ public class Evento {
 
     @Column(name = "DESCRICAO_EVENTO")
     private String descricaoEvento;
+
+    @ManyToOne
+    @JoinColumn(name = "NUMERO_CONTRATO")
+    private Contrato contrato;
 }

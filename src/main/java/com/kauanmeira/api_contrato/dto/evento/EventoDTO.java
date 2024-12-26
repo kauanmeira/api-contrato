@@ -1,5 +1,6 @@
-package com.kauanmeira.api_contrato.dto;
+package com.kauanmeira.api_contrato.dto.evento;
 
+import com.kauanmeira.api_contrato.annotations.isDataValida;
 import com.kauanmeira.api_contrato.domain.evento.TipoEvento;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,9 +19,13 @@ public class EventoDTO {
     @NotNull(message = "Informe o tipo do evento")
     private TipoEvento tipoEvento;
 
+    @isDataValida
     @NotNull(message = "Informe a data do registro.")
     private LocalDate dataRegistro;
 
     @NotBlank(message = "Informe a descrição do evento.")
     private String descricaoEvento;
+
+    @NotNull(message = "Informe o número do contrato.")
+    private Long numeroContrato;
 }
