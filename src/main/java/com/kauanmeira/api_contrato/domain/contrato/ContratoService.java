@@ -25,6 +25,7 @@ public class ContratoService {
         contrato.setPartesEnvolvidas(partesEnvolvidas);
         return contratoMapper.toDTO(gravar(contrato));
     }
+
     private void validarPartesEnvolvidas(List<ParteEnvolvida> parteEnvolvidas) {
         List<String> inscricoesDuplicadas = parteEnvolvidas.stream()
                 .collect(Collectors.groupingBy(ParteEnvolvida::getInscricaoFederal, Collectors.counting()))
@@ -67,10 +68,10 @@ public class ContratoService {
         return this.contratoRepository.save(contrato);
     }
 
-    public void atualizar(AtualizarContratoDTO atualizarContratoDTO, Long numeroContrato) {
+    public Contrato atualizar(AtualizarContratoDTO atualizarContratoDTO, Long numeroContrato) {
         Contrato contratoExistente = contratoRepository.findContratoByNumeroContrato(numeroContrato).orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, "Contrato não encontrado para o número inserido."));
         Contrato contrato = contratoMapper.updateFromDTO(atualizarContratoDTO, contratoExistente);
-        gravar(contrato);
+        return gravar(contrato);
     }
 
     public void arquivar(Long numeroContrato) {
@@ -78,6 +79,7 @@ public class ContratoService {
         contratoExistente.setArquivado(true);
         gravar(contratoExistente);
     }
+
     public void desarquivar(Long numeroContrato) {
         Contrato contratoExistente = contratoRepository.findContratoByNumeroContrato(numeroContrato).orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, "Contrato não encontrado para o número inserido."));
         contratoExistente.setArquivado(false);

@@ -21,6 +21,6 @@ public class AtualizarContratoDTO {
 
     private StatusContrato statusContrato;
 
-    private boolean arquivado;
+    private Boolean arquivado;
 
 }

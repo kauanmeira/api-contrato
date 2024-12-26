@@ -48,4 +48,6 @@ public class ParteEnvolvida {
     @ManyToMany(mappedBy = "partesEnvolvidas")
     @JsonIgnore
     private List<Contrato> contratos = new ArrayList<>();
+
+
 }
