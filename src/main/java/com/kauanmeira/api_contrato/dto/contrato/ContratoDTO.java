@@ -3,7 +3,7 @@ package com.kauanmeira.api_contrato.dto.contrato;
 
 import com.kauanmeira.api_contrato.annotations.isDataValida;
 import com.kauanmeira.api_contrato.domain.contrato.StatusContrato;
-import com.kauanmeira.api_contrato.dto.parteEnvolvida.ParteEnvolvidaDTO;
+import com.kauanmeira.api_contrato.dto.parte.ParteEnvolvidaDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

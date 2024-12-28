@@ -33,10 +33,10 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 		<sonar.language>java</sonar.language>
-		<sonar.projectKey>api-contrato</sonar.projectKey>
-		<sonar.projectName>api-contrato</sonar.projectName>
+		<sonar.projectKey>contrato</sonar.projectKey>
+		<sonar.projectName>contrato</sonar.projectName>
 		<sonar.host.url>http://localhost:9000</sonar.host.url>
-		<sonar.token>squ_c5f7a0678ddf37678cb1d25bcf6e0358ff34f5c5</sonar.token>
+		<sonar.token>sqp_289e02344593b7cfe9d8e51abe437419d7c5c92e</sonar.token>
 		<sonar.coverage.minimum>80</sonar.coverage.minimum>
 
 		<junit.version>4.13.2</junit.version>
@@ -134,12 +134,12 @@
 			<artifactId>sonar-packaging-maven-plugin</artifactId>
 			<version>1.23.0.740</version>
 		</dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>16.0.1</version>
+		</dependency>
+
 
     </dependencies>
 

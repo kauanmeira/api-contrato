@@ -1,8 +1,8 @@
 package com.kauanmeira.api_contrato.domain.parte;
 
+import com.kauanmeira.api_contrato.dto.parte.AtualizarParteEnvolvidaDTO;
+import com.kauanmeira.api_contrato.dto.parte.ParteEnvolvidaDTO;
 import com.kauanmeira.api_contrato.exceptions.AttusException;
-import com.kauanmeira.api_contrato.dto.parteEnvolvida.AtualizarParteEnvolvidaDTO;
-import com.kauanmeira.api_contrato.dto.parteEnvolvida.ParteEnvolvidaDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 public class ParteEnvolvidaService {
 
     private final ParteEnvolvidaRepository parteEnvolvidaRepository;
-    private final ParteEnvolvidaMapper parteEnvolvidaMapper = ParteEnvolvidaMapper.INSTANCE;
+    private static final ParteEnvolvidaMapper parteEnvolvidaMapper = ParteEnvolvidaMapper.INSTANCE;
 
     public ParteEnvolvida cadastrar(ParteEnvolvidaDTO parteEnvolvidaDTO) {
         ParteEnvolvida parteEnvolvida = parteEnvolvidaMapper.toObject(parteEnvolvidaDTO);
@@ -24,14 +24,8 @@ public class ParteEnvolvidaService {
         return gravar(parteEnvolvida);
     }
 
-    public ParteEnvolvidaDTO buscarPorId(Long id) {
-        ParteEnvolvida parteEnvolvida = parteEnvolvidaRepository.findById(id)
-                .orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, "Parte Envolvida não encontrada para o Id informado."));
-        return parteEnvolvidaMapper.toDTO(parteEnvolvida);
-    }
-
     private ParteEnvolvida gravar(ParteEnvolvida parteEnvolvida) {
-        return this.parteEnvolvidaRepository.save(parteEnvolvida)                ;
+        return this.parteEnvolvidaRepository.save(parteEnvolvida);
     }
 
     public void atualizarParteEnvolvida(AtualizarParteEnvolvidaDTO atualizarParteEnvolvidaDTO, Long id) {
@@ -40,20 +34,14 @@ public class ParteEnvolvidaService {
         gravar(parteEnvolvida);
     }
 
-    public void deletar(Long id) {
-        ParteEnvolvida parteEnvolvida = parteEnvolvidaRepository.findById(id).orElseThrow(() ->
-                new AttusException(HttpStatus.NOT_FOUND, "ParteEnvolvida não encontrada para o Id inserido."));
-        parteEnvolvidaRepository.delete(parteEnvolvida);
-    }
 
-    private String validarInscricaoFederal(String inscricaoFederal) {
+    private void validarInscricaoFederal(String inscricaoFederal) {
         if (inscricaoFederal != null && !inscricaoFederal.isBlank()) {
             Pattern pattern = Pattern.compile("^\\d+$");
             if (!pattern.matcher(inscricaoFederal).matches()) {
                 throw new AttusException(HttpStatus.BAD_REQUEST, "A inscrição federal deve conter apenas caracteres numéricos.");
             }
         }
-        return inscricaoFederal;
     }
 
 }

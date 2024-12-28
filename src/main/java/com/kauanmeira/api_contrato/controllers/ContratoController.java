@@ -1,13 +1,13 @@
 package com.kauanmeira.api_contrato.controllers;
 
 import com.kauanmeira.api_contrato.domain.contrato.ContratoService;
+import com.kauanmeira.api_contrato.domain.contrato.StatusContrato;
 import com.kauanmeira.api_contrato.domain.parte.ParteEnvolvida;
 import com.kauanmeira.api_contrato.domain.parte.ParteEnvolvidaService;
 import com.kauanmeira.api_contrato.dto.contrato.AtualizarContratoDTO;
 import com.kauanmeira.api_contrato.dto.contrato.ContratoDTO;
-import com.kauanmeira.api_contrato.dto.parteEnvolvida.ParteEnvolvidaDTO;
+import com.kauanmeira.api_contrato.dto.parte.ParteEnvolvidaDTO;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +20,14 @@ import java.util.List;
 @RequestMapping("/contrato")
 public class ContratoController {
 
-    @Autowired
-    private ContratoService contratoService;
+    private final ContratoService contratoService;
 
-    @Autowired
-    private ParteEnvolvidaService parteEnvolvidaService;
+    private final ParteEnvolvidaService parteEnvolvidaService;
+
+    public ContratoController(ContratoService contratoService, ParteEnvolvidaService parteEnvolvidaService) {
+        this.contratoService = contratoService;
+        this.parteEnvolvidaService = parteEnvolvidaService;
+    }
 
     @PostMapping
     public ContratoDTO criarContrato(@Valid @RequestBody ContratoDTO contrato) {
@@ -42,11 +45,18 @@ public class ContratoController {
         return ResponseEntity.status(HttpStatus.OK).body("Contrato atualizado com sucesso!");
     }
 
+    @PutMapping("/atualizar-status/{numeroContrato}")
+    public ResponseEntity<ContratoDTO> atualizarStatus(@PathVariable Long numeroContrato, @RequestParam StatusContrato statusContrato) {
+        ContratoDTO contratoAtualizado = contratoService.atualizarStatus(numeroContrato, statusContrato);
+        return ResponseEntity.ok(contratoAtualizado);
+    }
+
     @PutMapping("/arquivar/{numeroContrato}")
     public ResponseEntity<String> arquivar(@PathVariable Long numeroContrato) {
         contratoService.arquivar(numeroContrato);
         return ResponseEntity.status(HttpStatus.OK).body("Contrato arquivado com sucesso!");
     }
+
     @PutMapping("/desarquivar/{numeroContrato}")
     public ResponseEntity<String> desarquivar(@PathVariable Long numeroContrato) {
         contratoService.desarquivar(numeroContrato);

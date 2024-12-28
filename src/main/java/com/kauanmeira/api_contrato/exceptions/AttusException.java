@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatusCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class AttusException extends RuntimeException {
-    private HttpStatusCode code;
-    private String message;
+    private final HttpStatusCode code;
+    private final String message;
 
     public AttusException(HttpStatusCode code, String message) {
         super(message);

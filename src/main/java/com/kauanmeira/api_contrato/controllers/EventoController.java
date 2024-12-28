@@ -10,7 +10,6 @@ import com.kauanmeira.api_contrato.dto.contrato.ContratoDTO;
 import com.kauanmeira.api_contrato.dto.evento.AtualizarEventoDTO;
 import com.kauanmeira.api_contrato.dto.evento.EventoDTO;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +18,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/evento")
-@RequiredArgsConstructor
 public class EventoController {
     private final EventoService eventoService;
     private final ContratoService contratoService;
+
+    public EventoController(EventoService eventoService, ContratoService contratoService) {
+        this.eventoService = eventoService;
+        this.contratoService = contratoService;
+    }
+
     private static final EventoMapper eventoMapper = EventoMapper.INSTANCE;
     private static final ContratoMapper contratoMapper = ContratoMapper.INSTANCE;
 
