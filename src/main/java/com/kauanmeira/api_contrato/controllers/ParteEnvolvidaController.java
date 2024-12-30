@@ -19,7 +19,11 @@ public class ParteEnvolvidaController {
 
     @PutMapping("/atualizar/{id}")
     public ResponseEntity<String> atualizarParteEnvolvida(@PathVariable Long id, @Valid @RequestBody AtualizarParteEnvolvidaDTO atualizarParteEnvolvidaDTO) {
-        parteEnvolvidaService.atualizarParteEnvolvida(atualizarParteEnvolvidaDTO, id);
-        return ResponseEntity.status(HttpStatus.OK).body("Parte Envolvida atualizada com sucesso!");
+        try{
+            parteEnvolvidaService.atualizarParteEnvolvida(atualizarParteEnvolvidaDTO, id);
+            return ResponseEntity.status(HttpStatus.OK).body("Parte Envolvida atualizada com sucesso!");
+        }catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro na atualização.");
+        }
     }
 }

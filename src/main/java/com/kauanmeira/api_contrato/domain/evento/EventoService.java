@@ -1,6 +1,7 @@
 package com.kauanmeira.api_contrato.domain.evento;
 
 import com.kauanmeira.api_contrato.dto.evento.AtualizarEventoDTO;
+import com.kauanmeira.api_contrato.dto.evento.EventoDTO;
 import com.kauanmeira.api_contrato.exceptions.AttusException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,8 +35,8 @@ public class EventoService {
         gravar(evento);
     }
 
-    public List<Evento> buscarEventosPorNumeroContrato(Long numeroContrato) {
-        List<Evento> eventos = eventoRepository.findByContrato_NumeroContrato(numeroContrato);
+    public List<EventoDTO> buscarEventosPorNumeroContrato(Long numeroContrato) {
+        List<EventoDTO> eventos = eventoRepository.findByContrato_NumeroContrato(numeroContrato);
 
         if (!eventos.isEmpty()) return eventos;
         else

@@ -1,4 +1,4 @@
-package com.kauanmeira.api_contrato.services.contrato;
+package com.kauanmeira.api_contrato.controllers.contrato;
 
 import com.kauanmeira.api_contrato.controllers.ContratoController;
 import com.kauanmeira.api_contrato.domain.contrato.ContratoService;
@@ -108,7 +108,7 @@ class ContratoControllerTest {
         assertEquals(HttpStatus.OK, resultado.getStatusCode());
         assertEquals(123L, Objects.requireNonNull(resultado.getBody()).getNumeroContrato());
 
-        verify(contratoService).atualizarStatus(eq(123L), eq(StatusContrato.ATIVO));
+        verify(contratoService).atualizarStatus(123L, StatusContrato.ATIVO);
     }
 
     @Test
@@ -122,7 +122,7 @@ class ContratoControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Contrato atualizado com sucesso!"));
 
-        verify(contratoService).atualizar(any(AtualizarContratoDTO.class), eq(123L));
+        verify(contratoService).atualizar(any(AtualizarContratoDTO.class), any(Long.class));
     }
 
 

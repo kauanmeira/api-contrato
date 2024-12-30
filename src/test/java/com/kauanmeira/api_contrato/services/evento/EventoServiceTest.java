@@ -6,6 +6,7 @@ import com.kauanmeira.api_contrato.domain.evento.EventoRepository;
 import com.kauanmeira.api_contrato.domain.evento.EventoService;
 import com.kauanmeira.api_contrato.domain.evento.TipoEvento;
 import com.kauanmeira.api_contrato.dto.evento.AtualizarEventoDTO;
+import com.kauanmeira.api_contrato.dto.evento.EventoDTO;
 import com.kauanmeira.api_contrato.exceptions.AttusException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ class EventoServiceTest {
     private EventoRepository eventoRepository;
 
     private Evento evento;
+    private EventoDTO eventoDTO;
     private Contrato contrato;
     private static final String MENSAGEM_EVENTO_NAO_ENCONTRADO = "Evento não encontrado para o número informado: ";
     private static final String MENSAGEM_EVENTO_DUPLICADO = "Já existe um evento do mesmo tipo para este contrato: ";
@@ -48,6 +50,12 @@ class EventoServiceTest {
         evento.setDataRegistro(LocalDate.now());
         evento.setTipoEvento(TipoEvento.ASSINATURA);
         evento.setContrato(contrato);
+
+        eventoDTO = new EventoDTO();
+        eventoDTO.setDescricaoEvento("Descrição teste de evento vinculado a um contrato");
+        eventoDTO.setDataRegistro(LocalDate.now());
+        eventoDTO.setTipoEvento(TipoEvento.ASSINATURA);
+        eventoDTO.setNumeroContrato(123L);
     }
 
     @Test
@@ -114,9 +122,9 @@ class EventoServiceTest {
     @Test
     void buscarEventosPorNumeroContratoComSucesso() {
         Mockito.when(eventoRepository.findByContrato_NumeroContrato(1L))
-                .thenReturn(List.of(evento));
+                .thenReturn(List.of(eventoDTO));
 
-        List<Evento> eventos = eventoService.buscarEventosPorNumeroContrato(1L);
+        List<EventoDTO> eventos = eventoService.buscarEventosPorNumeroContrato(1L);
 
         assertNotNull(eventos);
         assertFalse(eventos.isEmpty());

@@ -35,4 +35,7 @@ public class Evento {
     @ManyToOne
     @JoinColumn(name = "NUMERO_CONTRATO")
     private Contrato contrato;
+
+    @Transient
+    private Long numeroContrato;
 }

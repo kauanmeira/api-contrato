@@ -49,7 +49,7 @@ public class EventoController {
 
 
     @GetMapping("/{numeroContrato}")
-    public List<Evento> buscarEventosDoContratoPorNumero(@PathVariable Long numeroContrato) {
+    public List<EventoDTO> buscarEventosDoContratoPorNumero(@PathVariable Long numeroContrato) {
         return eventoService.buscarEventosPorNumeroContrato(numeroContrato);
     }
 

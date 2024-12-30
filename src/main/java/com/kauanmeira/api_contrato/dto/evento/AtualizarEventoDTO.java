@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AtualizarEventoDTO {
+
     private TipoEvento tipoEvento;
 
     @isDataValida

@@ -137,9 +137,7 @@ class ContratoServiceTest {
         Mockito.when(contratoRepository.findByPartesEnvolvidas_InscricaoFederal(parteBuscaInscricaoSemResultado.getInscricaoFederal()))
                 .thenReturn(new ArrayList<>());
 
-        AttusException exception = assertThrows(AttusException.class, () -> contratoService.buscarPorInscricao(parteBuscaInscricaoSemResultado.getInscricaoFederal()));
-
-        assertNotNull(exception);
+        assertThrows(AttusException.class, () -> contratoService.buscarPorInscricao(parteBuscaInscricaoSemResultado.getInscricaoFederal()));
     }
 
 
@@ -201,7 +199,6 @@ class ContratoServiceTest {
     void arquivarContratosComSucesso() {
         List<Long> numerosContratos = List.of(1L, 2L);
 
-        // Criação de contratos com campo 'arquivado' como false
         List<Contrato> contratos = numerosContratos.stream()
                 .map(numero -> {
                     Contrato c = new Contrato();
