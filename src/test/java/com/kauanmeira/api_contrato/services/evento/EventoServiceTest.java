@@ -1,4 +1,4 @@
-package com.kauanmeira.api_contrato.services;
+package com.kauanmeira.api_contrato.services.evento;
 
 import com.kauanmeira.api_contrato.domain.contrato.Contrato;
 import com.kauanmeira.api_contrato.domain.evento.Evento;
@@ -33,6 +33,9 @@ class EventoServiceTest {
 
     private Evento evento;
     private Contrato contrato;
+    private static final String MENSAGEM_EVENTO_NAO_ENCONTRADO = "Evento não encontrado para o número informado: ";
+    private static final String MENSAGEM_EVENTO_DUPLICADO = "Já existe um evento do mesmo tipo para este contrato: ";
+
 
     @BeforeEach
     void setup() {
@@ -70,7 +73,10 @@ class EventoServiceTest {
 
         AttusException exception = assertThrows(AttusException.class, () -> eventoService.cadastrarEvento(evento));
 
-        assertEquals("Já existe um evento do mesmo tipo para este contrato.", exception.getMessage());
+        assertEquals(MENSAGEM_EVENTO_DUPLICADO +
+                        "Numero Contrato: " + evento.getContrato().getNumeroContrato() +
+                        "Tipo Evento: " + evento.getTipoEvento()
+                , exception.getMessage());
     }
 
     @Test
@@ -96,11 +102,13 @@ class EventoServiceTest {
     void atualizarEventoNaoEncontrado() {
         Mockito.when(eventoRepository.findById(1L)).thenReturn(Optional.empty());
 
-        AttusException exception = assertThrows(AttusException.class, () -> {
-            eventoService.atualizarEvento(new AtualizarEventoDTO(), 1L);
-        });
+        EventoService eventoServiceMock = eventoService;
 
-        assertEquals("Evento não encontrado para o número inserido.", exception.getMessage());
+        AttusException exception = assertThrows(AttusException.class, () ->
+                eventoServiceMock.atualizarEvento(new AtualizarEventoDTO(), 1L)
+        );
+
+        assertEquals(MENSAGEM_EVENTO_NAO_ENCONTRADO + 1L, exception.getMessage());
     }
 
     @Test
@@ -122,7 +130,7 @@ class EventoServiceTest {
 
         AttusException exception = assertThrows(AttusException.class, () -> eventoService.buscarEventosPorNumeroContrato(1L));
 
-        assertEquals("Evento não encontrado para o número de contrato informado.", exception.getMessage());
+        assertEquals(MENSAGEM_EVENTO_NAO_ENCONTRADO + contrato.getNumeroContrato(), exception.getMessage());
     }
 
     @Test
@@ -145,7 +153,7 @@ class EventoServiceTest {
 
         AttusException exception = assertThrows(AttusException.class, () -> eventoService.buscarEventosDoContratoPorTipo(1L, TipoEvento.ASSINATURA));
 
-        assertEquals("Evento não encontrado para o número de contrato informado.", exception.getMessage());
+        assertEquals(MENSAGEM_EVENTO_NAO_ENCONTRADO + contrato.getNumeroContrato(), exception.getMessage());
     }
 
 }

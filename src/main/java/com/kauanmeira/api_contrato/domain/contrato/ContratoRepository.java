@@ -12,5 +12,7 @@ public interface ContratoRepository extends JpaRepository<Contrato, Long> {
     Optional<Contrato> findContratoByNumeroContrato(Long numero);
     List<Contrato> findContratoByDataCriacao(LocalDate dataCriacao);
 
+    List<Contrato> findAllByNumeroContratoIn(List<Long> numerosContratos);
+
     List<Contrato> findByPartesEnvolvidas_InscricaoFederal(String inscricaoFederal);
 }

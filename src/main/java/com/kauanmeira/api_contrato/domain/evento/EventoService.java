@@ -15,17 +15,21 @@ public class EventoService {
 
     private final EventoRepository eventoRepository;
     private static final EventoMapper eventoMapper = EventoMapper.INSTANCE;
+    private static final String MENSAGEM_EVENTO_NAO_ENCONTRADO = "Evento não encontrado para o número informado: ";
+    private static final String MENSAGEM_EVENTO_DUPLICADO = "Já existe um evento do mesmo tipo para este contrato: ";
 
     public Evento cadastrarEvento(Evento evento) {
         Optional<Evento> eventoExistente = eventoRepository.findByContrato_NumeroContratoAndTipoEvento(evento.getContrato().getNumeroContrato(), evento.getTipoEvento());
         if (eventoExistente.isPresent()) {
-            throw new AttusException(HttpStatus.FORBIDDEN, "Já existe um evento do mesmo tipo para este contrato.");
+            throw new AttusException(HttpStatus.FORBIDDEN, MENSAGEM_EVENTO_DUPLICADO +
+                    "Numero Contrato: " + evento.getContrato().getNumeroContrato() +
+                    "Tipo Evento: " + evento.getTipoEvento());
         }
         return gravar(evento);
     }
 
     public void atualizarEvento(AtualizarEventoDTO atualizarEventoDTO, Long id) {
-        Evento eventoExistente = eventoRepository.findById(id).orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, "Evento não encontrado para o número inserido."));
+        Evento eventoExistente = eventoRepository.findById(id).orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_EVENTO_NAO_ENCONTRADO + id));
         Evento evento = eventoMapper.updateFromDTO(atualizarEventoDTO, eventoExistente);
         gravar(evento);
     }
@@ -35,7 +39,7 @@ public class EventoService {
 
         if (!eventos.isEmpty()) return eventos;
         else
-            throw new AttusException(HttpStatus.NOT_FOUND, "Evento não encontrado para o número de contrato informado.");
+            throw new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_EVENTO_NAO_ENCONTRADO + numeroContrato);
     }
 
     public Evento buscarEventosDoContratoPorTipo(Long numeroContrato, TipoEvento tipoEvento) {
@@ -43,7 +47,7 @@ public class EventoService {
 
         if (evento.isPresent()) return evento.get();
         else
-            throw new AttusException(HttpStatus.NOT_FOUND, "Evento não encontrado para o número de contrato informado.");
+            throw new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_EVENTO_NAO_ENCONTRADO + numeroContrato);
     }
 
     private Evento gravar(Evento evento) {

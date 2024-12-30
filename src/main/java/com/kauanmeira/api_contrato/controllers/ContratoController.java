@@ -51,16 +51,16 @@ public class ContratoController {
         return ResponseEntity.ok(contratoAtualizado);
     }
 
-    @PutMapping("/arquivar/{numeroContrato}")
-    public ResponseEntity<String> arquivar(@PathVariable Long numeroContrato) {
-        contratoService.arquivar(numeroContrato);
-        return ResponseEntity.status(HttpStatus.OK).body("Contrato arquivado com sucesso!");
+    @PutMapping("/arquivar")
+    public ResponseEntity<String> arquivar(@RequestParam List<Long> numerosContratos) {
+        contratoService.arquivarUmOuMaisContratos(numerosContratos);
+        return ResponseEntity.status(HttpStatus.OK).body("Contratos arquivados com sucesso!");
     }
 
-    @PutMapping("/desarquivar/{numeroContrato}")
-    public ResponseEntity<String> desarquivar(@PathVariable Long numeroContrato) {
-        contratoService.desarquivar(numeroContrato);
-        return ResponseEntity.status(HttpStatus.OK).body("Contrato arquivado com sucesso!");
+    @PutMapping("/desarquivar")
+    public ResponseEntity<String> desarquivar(@RequestParam List<Long> numerosContratos) {
+        contratoService.desarquivarUmOuMaisContratos(numerosContratos);
+        return ResponseEntity.status(HttpStatus.OK).body("Contratos desarquivados com sucesso!");
     }
 
     @GetMapping("/{numeroContrato}")

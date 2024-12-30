@@ -18,7 +18,12 @@ import java.util.stream.Collectors;
 public class ContratoService {
     private final ContratoRepository contratoRepository;
     private static final ContratoMapper contratoMapper = ContratoMapper.INSTANCE;
-    private static final String MENSAGEM_CONTRATO_NAO_ENCONTRADO = "Contrato não encontrado para o número inserido.";
+    private static final String MENSAGEM_CONTRATO_NAO_ENCONTRADO_NUMERO = "Contrato não encontrado para o número informado: ";
+    private static final String MENSAGEM_CONTRATOS_NAO_ENCONTRADOS_NUMEROS = "Contratos não encontrados para os números informados: ";
+    private static final String MENSAGEM_CONTRATO_NAO_ENCONTRADO_DATA = "Contrato não encontrado para o data informada: ";
+    private static final String MENSAGEM_CONTRATO_NAO_ENCONTRADO_INSCRICAO = "Contrato não encontrado para o data informada: ";
+    private static final String MENSAGEM_CONTRATO_JA_ARQUIVADO = "Os seguintes contratos já estão arquivados: ";
+    private static final String MENSAGEM_CONTRATO_JA_DESARQUIVADO = "Os seguintes contratos não estão desarquivados: ";
 
 
     public ContratoDTO cadastrar(ContratoDTO contratoDTO, List<ParteEnvolvida> partesEnvolvidas) {
@@ -46,14 +51,14 @@ public class ContratoService {
 
     public ContratoDTO buscarPorNumero(Long numero) {
         Contrato contrato = contratoRepository.findContratoByNumeroContrato(numero)
-                .orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, "Contrato não encontrada para o número informado."));
+                .orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_CONTRATO_NAO_ENCONTRADO_NUMERO + numero));
         return contratoMapper.toDTO(contrato);
     }
 
     public List<ContratoDTO> buscarPorData(LocalDate dataCriacao) {
         List<Contrato> contratos = contratoRepository.findContratoByDataCriacao(dataCriacao);
         if (contratos.isEmpty()) {
-            throw new AttusException(HttpStatus.NOT_FOUND, "Contrato não encontrada para a data informada.");
+            throw new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_CONTRATO_NAO_ENCONTRADO_DATA + dataCriacao);
         }
         return contratos.stream().map(contratoMapper::toDTO).toList();
     }
@@ -61,43 +66,104 @@ public class ContratoService {
     public List<ContratoDTO> buscarPorInscricao(String inscricaoFederal) {
         List<Contrato> contratos = contratoRepository.findByPartesEnvolvidas_InscricaoFederal(inscricaoFederal);
         if (contratos.isEmpty()) {
-            throw new AttusException(HttpStatus.NOT_FOUND, "Contrato não encontrada para a inscrição federal informada.");
+            throw new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_CONTRATO_NAO_ENCONTRADO_INSCRICAO + inscricaoFederal);
         }
         return contratos.stream().map(contratoMapper::toDTO).toList();
     }
 
     private Contrato gravar(Contrato contrato) {
-        return this.contratoRepository.save(contrato);
+        try {
+            return this.contratoRepository.save(contrato);
+        } catch (Exception e) {
+            throw new AttusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao salvar Contrato no banco de dados: " + e.getMessage());
+        }
+    }
+
+    private List<Contrato> gravarContratos(List<Contrato> contratos) {
+        try {
+            return this.contratoRepository.saveAll(contratos);
+        } catch (Exception e) {
+            throw new AttusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao salvar Contratos no banco de dados: " + e.getMessage());
+        }
     }
 
     public Contrato atualizar(AtualizarContratoDTO atualizarContratoDTO, Long numeroContrato) {
         Contrato contratoExistente = contratoRepository.findContratoByNumeroContrato(numeroContrato)
-                .orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_CONTRATO_NAO_ENCONTRADO));
+                .orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_CONTRATO_NAO_ENCONTRADO_NUMERO + numeroContrato));
         Contrato contrato = contratoMapper.updateFromDTO(atualizarContratoDTO, contratoExistente);
         return gravar(contrato);
     }
 
     public ContratoDTO atualizarStatus(Long numeroContrato, StatusContrato statusContrato) {
         Contrato contratoExistente = contratoRepository.findContratoByNumeroContrato(numeroContrato)
-                .orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_CONTRATO_NAO_ENCONTRADO));
+                .orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_CONTRATO_NAO_ENCONTRADO_NUMERO + numeroContrato));
 
         contratoExistente.setStatusContrato(statusContrato);
         Contrato contratoAtualizado = gravar(contratoExistente);
         return contratoMapper.toDTO(contratoAtualizado);
     }
 
-    public void arquivar(Long numeroContrato) {
-        Contrato contratoExistente = contratoRepository.findContratoByNumeroContrato(numeroContrato)
-                .orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_CONTRATO_NAO_ENCONTRADO));
-        contratoExistente.setArquivado(true);
-        gravar(contratoExistente);
+    public void arquivarUmOuMaisContratos(List<Long> numerosContratos) {
+        if (numerosContratos == null || numerosContratos.isEmpty()) {
+            throw new AttusException(HttpStatus.BAD_REQUEST, MENSAGEM_CONTRATOS_NAO_ENCONTRADOS_NUMEROS + numerosContratos);
+        }
+
+        List<Contrato> contratosExistentes = contratoRepository.findAllByNumeroContratoIn(numerosContratos);
+
+        verificarContratosJaArquivados(contratosExistentes);
+        verificarContratosNaoEncontrados(contratosExistentes, numerosContratos);
+
+        contratosExistentes.forEach(contrato -> contrato.setArquivado(true));
+        gravarContratos(contratosExistentes);
     }
 
-    public void desarquivar(Long numeroContrato) {
-        Contrato contratoExistente = contratoRepository.findContratoByNumeroContrato(numeroContrato)
-                .orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_CONTRATO_NAO_ENCONTRADO));
-        contratoExistente.setArquivado(false);
-        gravar(contratoExistente);
+    private void verificarContratosJaArquivados(List<Contrato> contratosExistentes) {
+        List<Long> jaArquivados = contratosExistentes.stream()
+                .filter(Contrato::isArquivado)
+                .map(Contrato::getNumeroContrato)
+                .toList();
+
+        if (!jaArquivados.isEmpty()) {
+            throw new AttusException(HttpStatus.BAD_REQUEST, MENSAGEM_CONTRATO_JA_ARQUIVADO + jaArquivados);
+        }
     }
+
+
+    public void desarquivarUmOuMaisContratos(List<Long> numerosContratos) {
+        if (numerosContratos == null || numerosContratos.isEmpty()) {
+            throw new AttusException(HttpStatus.BAD_REQUEST, MENSAGEM_CONTRATOS_NAO_ENCONTRADOS_NUMEROS + numerosContratos);
+        }
+
+        List<Contrato> contratosExistentes = contratoRepository.findAllByNumeroContratoIn(numerosContratos);
+
+        verificarContratosNaoArquivados(contratosExistentes);
+        verificarContratosNaoEncontrados(contratosExistentes, numerosContratos);
+
+        contratosExistentes.forEach(contrato -> contrato.setArquivado(false));
+        gravarContratos(contratosExistentes);
+    }
+
+    private void verificarContratosNaoArquivados(List<Contrato> contratosExistentes) {
+        List<Long> naoArquivados = contratosExistentes.stream()
+                .filter(contrato -> !contrato.isArquivado())
+                .map(Contrato::getNumeroContrato)
+                .toList();
+
+        if (!naoArquivados.isEmpty()) {
+            throw new AttusException(HttpStatus.BAD_REQUEST, MENSAGEM_CONTRATO_JA_DESARQUIVADO + naoArquivados);
+        }
+    }
+
+    private void verificarContratosNaoEncontrados(List<Contrato> contratosExistentes, List<Long> numerosContratos) {
+        if (contratosExistentes.size() != numerosContratos.size()) {
+            List<Long> contratosNaoEncontrados = numerosContratos.stream()
+                    .filter(numero -> contratosExistentes.stream()
+                            .noneMatch(contrato -> contrato.getNumeroContrato().equals(numero)))
+                    .toList();
+            throw new AttusException(HttpStatus.NOT_FOUND,
+                    MENSAGEM_CONTRATOS_NAO_ENCONTRADOS_NUMEROS + contratosNaoEncontrados);
+        }
+    }
+
 
 }
