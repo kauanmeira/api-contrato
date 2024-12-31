@@ -82,7 +82,7 @@ class EventoServiceTest {
         AttusException exception = assertThrows(AttusException.class, () -> eventoService.cadastrarEvento(evento));
 
         assertEquals(MENSAGEM_EVENTO_DUPLICADO +
-                        "Numero Contrato: " + evento.getContrato().getNumeroContrato() +
+                        "Numero Contrato: " + evento.getContrato().getNumeroContrato() + ", " +
                         "Tipo Evento: " + evento.getTipoEvento()
                 , exception.getMessage());
     }
@@ -118,6 +118,41 @@ class EventoServiceTest {
 
         assertEquals(MENSAGEM_EVENTO_NAO_ENCONTRADO + 1L, exception.getMessage());
     }
+
+    @Test
+    void atualizarEventoDuplicado() {
+        AtualizarEventoDTO atualizarEventoDTO = new AtualizarEventoDTO();
+        atualizarEventoDTO.setDescricaoEvento("Nova descrição");
+        atualizarEventoDTO.setTipoEvento(TipoEvento.ASSINATURA); // Mesmo tipo de evento que já existe
+        atualizarEventoDTO.setDataRegistro(LocalDate.now());
+
+        // Simula que o evento a ser atualizado existe
+        Mockito.when(eventoRepository.findById(1L)).thenReturn(Optional.of(evento));
+
+        // Simula que há um evento duplicado com o mesmo tipo e número de contrato, mas com ID diferente
+        Evento eventoDuplicado = new Evento();
+        eventoDuplicado.setId(2L);
+        eventoDuplicado.setContrato(evento.getContrato());
+        eventoDuplicado.setTipoEvento(evento.getTipoEvento());
+
+        Mockito.when(eventoRepository.findByContrato_NumeroContratoAndTipoEvento(
+                        evento.getContrato().getNumeroContrato(), TipoEvento.ASSINATURA))
+                .thenReturn(Optional.of(eventoDuplicado));
+
+        // Testa se a exceção é lançada
+        AttusException exception = assertThrows(AttusException.class, () ->
+                eventoService.atualizarEvento(atualizarEventoDTO, 1L)
+        );
+
+        assertEquals(MENSAGEM_EVENTO_DUPLICADO +
+                        "Numero Contrato: " + evento.getContrato().getNumeroContrato() + ", " +
+                        "Tipo Evento: " + TipoEvento.ASSINATURA,
+                exception.getMessage());
+
+        // Verifica que o método de salvar não foi chamado
+        Mockito.verify(eventoRepository, Mockito.times(0)).save(Mockito.any(Evento.class));
+    }
+
 
     @Test
     void buscarEventosPorNumeroContratoComSucesso() {

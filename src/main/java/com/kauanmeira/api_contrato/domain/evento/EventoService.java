@@ -23,16 +23,29 @@ public class EventoService {
         Optional<Evento> eventoExistente = eventoRepository.findByContrato_NumeroContratoAndTipoEvento(evento.getContrato().getNumeroContrato(), evento.getTipoEvento());
         if (eventoExistente.isPresent()) {
             throw new AttusException(HttpStatus.FORBIDDEN, MENSAGEM_EVENTO_DUPLICADO +
-                    "Numero Contrato: " + evento.getContrato().getNumeroContrato() +
+                    "Numero Contrato: " + evento.getContrato().getNumeroContrato() + ", " +
                     "Tipo Evento: " + evento.getTipoEvento());
         }
         return gravar(evento);
     }
 
     public void atualizarEvento(AtualizarEventoDTO atualizarEventoDTO, Long id) {
-        Evento eventoExistente = eventoRepository.findById(id).orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_EVENTO_NAO_ENCONTRADO + id));
-        Evento evento = eventoMapper.updateFromDTO(atualizarEventoDTO, eventoExistente);
-        gravar(evento);
+        Evento eventoExistente = eventoRepository.findById(id)
+                .orElseThrow(() -> new AttusException(HttpStatus.NOT_FOUND, MENSAGEM_EVENTO_NAO_ENCONTRADO + id));
+
+        Evento eventoAtualizado = eventoMapper.updateFromDTO(atualizarEventoDTO, eventoExistente);
+
+        Optional<Evento> eventoDuplicado = eventoRepository
+                .findByContrato_NumeroContratoAndTipoEvento(eventoAtualizado.getContrato().getNumeroContrato(), eventoAtualizado.getTipoEvento())
+                .filter(evento -> !evento.getId().equals(id)); // Ignora o próprio evento
+
+        if (eventoDuplicado.isPresent()) {
+            throw new AttusException(HttpStatus.FORBIDDEN, MENSAGEM_EVENTO_DUPLICADO +
+                    "Numero Contrato: " + eventoAtualizado.getContrato().getNumeroContrato() + ", " +
+                    "Tipo Evento: " + eventoAtualizado.getTipoEvento());
+        }
+
+        gravar(eventoAtualizado);
     }
 
     public List<EventoDTO> buscarEventosPorNumeroContrato(Long numeroContrato) {

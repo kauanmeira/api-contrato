@@ -161,15 +161,18 @@ class ContratoControllerTest {
 
     @Test
     void buscarContratoPorDataCriacao() throws Exception {
-        when(contratoService.buscarPorData(LocalDate.now())).thenReturn(List.of(contratoDTO));
+        contratoDTO.setNumeroContrato(123L);
+        when(contratoService.buscarPorData(LocalDate.of(2024, 12, 30))).thenReturn(List.of(contratoDTO));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/contrato/buscar-por-data")
                         .param("dataCriacao", "2024-12-30"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].numeroContrato").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].numeroContrato").value(123L));
 
-        verify(contratoService).buscarPorData(LocalDate.now());
+        verify(contratoService).buscarPorData(LocalDate.of(2024, 12, 30));
     }
+
 
     @Test
     void buscarContratoPorInscricao() throws Exception {
