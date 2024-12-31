@@ -123,13 +123,11 @@ class EventoServiceTest {
     void atualizarEventoDuplicado() {
         AtualizarEventoDTO atualizarEventoDTO = new AtualizarEventoDTO();
         atualizarEventoDTO.setDescricaoEvento("Nova descrição");
-        atualizarEventoDTO.setTipoEvento(TipoEvento.ASSINATURA); // Mesmo tipo de evento que já existe
+        atualizarEventoDTO.setTipoEvento(TipoEvento.ASSINATURA);
         atualizarEventoDTO.setDataRegistro(LocalDate.now());
 
-        // Simula que o evento a ser atualizado existe
         Mockito.when(eventoRepository.findById(1L)).thenReturn(Optional.of(evento));
 
-        // Simula que há um evento duplicado com o mesmo tipo e número de contrato, mas com ID diferente
         Evento eventoDuplicado = new Evento();
         eventoDuplicado.setId(2L);
         eventoDuplicado.setContrato(evento.getContrato());
@@ -139,7 +137,6 @@ class EventoServiceTest {
                         evento.getContrato().getNumeroContrato(), TipoEvento.ASSINATURA))
                 .thenReturn(Optional.of(eventoDuplicado));
 
-        // Testa se a exceção é lançada
         AttusException exception = assertThrows(AttusException.class, () ->
                 eventoService.atualizarEvento(atualizarEventoDTO, 1L)
         );
@@ -149,7 +146,6 @@ class EventoServiceTest {
                         "Tipo Evento: " + TipoEvento.ASSINATURA,
                 exception.getMessage());
 
-        // Verifica que o método de salvar não foi chamado
         Mockito.verify(eventoRepository, Mockito.times(0)).save(Mockito.any(Evento.class));
     }
 

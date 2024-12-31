@@ -37,7 +37,7 @@ public class EventoService {
 
         Optional<Evento> eventoDuplicado = eventoRepository
                 .findByContrato_NumeroContratoAndTipoEvento(eventoAtualizado.getContrato().getNumeroContrato(), eventoAtualizado.getTipoEvento())
-                .filter(evento -> !evento.getId().equals(id)); // Ignora o próprio evento
+                .filter(evento -> !evento.getId().equals(id));
 
         if (eventoDuplicado.isPresent()) {
             throw new AttusException(HttpStatus.FORBIDDEN, MENSAGEM_EVENTO_DUPLICADO +
